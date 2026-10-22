@@ -1,0 +1,53 @@
+import streamlit as st
+import google.generativeai as genai
+
+# Page configuration
+st.set_page_config(
+    page_title="GenAI Study Assistant",
+    page_icon="🤖",
+    layout="centered"
+)
+
+# Title
+st.title("🤖 GenAI Study Assistant")
+st.write("Ask questions and get simple AI-powered answers.")
+
+# API Key
+api_key = st.text_input(
+    "Enter your Gemini API Key",
+    type="password"
+)
+
+# Configure Gemini
+if api_key:
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel("gemini-2.0-flash")
+
+    # User input
+    question = st.text_area(
+        "Enter your question:",
+        placeholder="Example: Explain Artificial Intelligence in simple words"
+    )
+
+    if st.button("Generate Answer 🚀"):
+        if question:
+            with st.spinner("Generating answer..."):
+                prompt = f"""
+                You are a helpful study assistant.
+                Explain the following question in simple English.
+                Give clear points and examples.
+
+                Question:
+                {question}
+                """
+
+                response = model.generate_content(prompt)
+
+                st.subheader("📚 AI Answer")
+                st.write(response.text)
+
+        else:
+            st.warning("Please enter a question.")
+
+else:
+    st.info("Please enter your Gemini API key to start.")
